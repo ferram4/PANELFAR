@@ -34,13 +34,14 @@ namespace panelfar
 
                 Matrix4x4 matrix = partUpMatrix * t.localToWorldMatrix;
 
-                for (int i = 0; i < m.vertices.Length; i++)
+                foreach (Vector3 vertex in m.vertices)
                 {
-                    Vector3d v = matrix.MultiplyPoint(m.vertices[i]);
+                    Vector3d v = matrix.MultiplyPoint(vertex);
                     vertexList.Add(v);
-
-                    int j = m.triangles[i];     //Vertex counter since otherwise there will be problems with parts that contain multiple mesh transforms
-                    vertexForTriList.Add(j + vertexOffset);
+                }
+                foreach(int i in m.triangles)
+                {
+                    vertexForTriList.Add(i + vertexOffset);     //Vertex offset since otherwise there will be problems with parts that contain multiple mesh transforms
                 }
                 vertexOffset += m.vertices.Length;
             }
