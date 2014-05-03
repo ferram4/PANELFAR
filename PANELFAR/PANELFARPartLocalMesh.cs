@@ -46,9 +46,10 @@ namespace panelfar
             material.SetPass(0);
             GL.LoadOrtho();
             GL.Begin(GL.TRIANGLES);
+            GL.wireframe = true;
             GL.Color(Color.yellow);
 
-            for (int i = 0; i < transformedVerts.Length; i = i + 3) //triangles are defined by threes, so this makes sense
+            for (int i = 0; i + 3 < transformedVerts.Length; i = i + 3) //triangles are defined by threes, so this makes sense
             {
                 int id0, id1, id2;
                 Vector3d v0, v1, v2;
@@ -62,13 +63,12 @@ namespace panelfar
                 v2 = transformedVerts[id2];
 
                 GLVertexMap(v0);
-
                 GLVertexMap(v1);
-
                 GLVertexMap(v2);
-            }
 
+            }
             GL.End();
+            GL.wireframe = false;
             GL.PopMatrix();
         }
     }

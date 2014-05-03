@@ -18,7 +18,7 @@ namespace panelfar
             List<Vector3d> vertexList = new List<Vector3d>();
             List<int> vertexForTriList = new List<int>();
 
-            int vertexCounter = 0;
+            int vertexOffset = 0;
             foreach (Transform t in p.FindModelComponents<Transform>())
             {
                 MeshFilter mf = t.GetComponent<MeshFilter>();
@@ -29,6 +29,9 @@ namespace panelfar
                 if (m == null)
                     continue;
 
+                if (p.InternalModelName == m.name)
+                    continue;
+
                 Matrix4x4 matrix = partUpMatrix * t.localToWorldMatrix;
 
                 for (int i = 0; i < m.vertices.Length; i++)
@@ -37,9 +40,9 @@ namespace panelfar
                     vertexList.Add(v);
 
                     int j = m.triangles[i];     //Vertex counter since otherwise there will be problems with parts that contain multiple mesh transforms
-                    vertexForTriList.Add(vertexCounter);
-                    vertexCounter++;
+                    vertexForTriList.Add(j + vertexOffset);
                 }
+                vertexOffset += m.vertices.Length;
             }
 
             mesh.vertexes = vertexList.ToArray();
