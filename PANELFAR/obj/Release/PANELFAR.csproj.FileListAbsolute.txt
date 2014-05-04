@@ -15,6 +15,6 @@ C:\Users\ferram4\PANELFAR\PANELFAR\bin\Release\UnityEngine.dll
 C:\Users\ferram4\PANELFAR\PANELFAR\bin\Release\Mono.Cecil.dll
 C:\Users\ferram4\PANELFAR\PANELFAR\bin\Release\Assembly-CSharp-firstpass.dll
 C:\Users\ferram4\PANELFAR\PANELFAR\bin\Release\TDx.TDxInput.dll
-C:\Users\ferram4\PANELFAR\PANELFAR\obj\Release\ResolveAssemblyReference.cache
 C:\Users\ferram4\PANELFAR\PANELFAR\obj\Release\PANELFAR.dll
 C:\Users\ferram4\PANELFAR\PANELFAR\obj\Release\PANELFAR.pdb
+C:\Users\ferram4\PANELFAR\PANELFAR\obj\Release\PANELFAR.csprojResolveAssemblyReference.cache

@@ -15,8 +15,8 @@ namespace panelfar
 
             Matrix4x4 partUpMatrix = p.transform.worldToLocalMatrix;
 
-            List<Vector3d> vertexList = new List<Vector3d>();
-            List<int> vertexForTriList = new List<int>();
+            List<Vector3> vertexList = new List<Vector3>();
+            List<meshIndexTriangle> vertexForTriList = new List<meshIndexTriangle>();
 
             int vertexOffset = 0;
             foreach (Transform t in p.FindModelComponents<Transform>())
@@ -36,19 +36,25 @@ namespace panelfar
 
                 foreach (Vector3 vertex in m.vertices)
                 {
-                    Vector3d v = matrix.MultiplyPoint(vertex);
+                    Vector3 v = matrix.MultiplyPoint(vertex);
                     vertexList.Add(v);
                 }
-                foreach(int i in m.triangles)
+                for (int i = 0; i < m.triangles.Length; i += 3)
                 {
-                    vertexForTriList.Add(i + vertexOffset);     //Vertex offset since otherwise there will be problems with parts that contain multiple mesh transforms
+                    meshIndexTriangle tri = new meshIndexTriangle();
+                    tri.v0 = m.triangles[i] + vertexOffset;
+                    tri.v1 = m.triangles[i + 1] + vertexOffset;
+                    tri.v2 = m.triangles[i + 2] + vertexOffset;
+                    vertexForTriList.Add(tri);     //Vertex offset since otherwise there will be problems with parts that contain multiple mesh transforms
                 }
                 vertexOffset += m.vertices.Length;
             }
 
             mesh.vertexes = vertexList.ToArray();
-            mesh.vertexesForTriangles = vertexForTriList.ToArray();
+            mesh.triangles = vertexForTriList.ToArray();
             mesh.part = p;
+
+            mesh = PANELFARMeshSimplification.PreProcessLocalMesh(mesh);
 
             return mesh;
         }

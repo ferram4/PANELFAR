@@ -49,8 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PANELFARControlObject.cs" />
+    <Compile Include="PANELFARMeshSimplification.cs" />
+    <Compile Include="PANELFARMeshUtils.cs" />
     <Compile Include="PANELFARPartLocalMeshGenerator.cs" />
     <Compile Include="PANELFARPartLocalMesh.cs" />
+    <Compile Include="PANELFARQuadric.cs" />
+    <Compile Include="PANELFARTriangleUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
