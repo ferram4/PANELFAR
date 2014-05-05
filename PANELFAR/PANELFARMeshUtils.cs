@@ -7,9 +7,9 @@ using KSP;
 
 namespace panelfar
 {
-    public struct meshIndexEdge
+    public struct MeshIndexEdge
     {
-        public meshIndexEdge(int vert0, int vert1)
+        public MeshIndexEdge(int vert0, int vert1)
         {
             v0 = vert0;
             v1 = vert1;
@@ -19,9 +19,9 @@ namespace panelfar
         public int v1;
     }
     
-    public struct meshIndexTriangle
+    public struct MeshIndexTriangle
     {
-        public meshIndexTriangle(int vert0, int vert1, int vert2)
+        public MeshIndexTriangle(int vert0, int vert1, int vert2)
         {
             v0 = vert0;
             v1 = vert1;
@@ -33,9 +33,9 @@ namespace panelfar
         public int v2;
     }
 
-    public struct meshIndexQuad
+    public struct MeshIndexQuad
     {
-        public meshIndexQuad(int vert0, int vert1, int vert2, int vert3)
+        public MeshIndexQuad(int vert0, int vert1, int vert2, int vert3)
         {
             v0 = vert0;
             v1 = vert1;
@@ -49,27 +49,41 @@ namespace panelfar
         public int v3;
     }
 
-    public struct meshVertex
+    public struct MeshVertex
     {
-        public meshVertex(Vector3 vertex, meshIndexTriangle[] tris)
+        public MeshVertex(Vector3 vertex, MeshIndexTriangle[] tris)
         {
             vert = vertex;
             attachedTris = tris;
         }
 
         public Vector3 vert;
-        public meshIndexTriangle[] attachedTris;
+        public MeshIndexTriangle[] attachedTris;
     }
 
-    public struct meshTriangle
+    public struct MeshTriangle
     {
-        public meshTriangle(meshIndexTriangle triangle, meshVertex[] verts)
+        public MeshTriangle(MeshIndexTriangle triangle, MeshVertex[] verts)
         {
             tri = triangle;
             attachedVerts = verts;
         }
 
-        public meshIndexTriangle tri;
-        public meshVertex[] attachedVerts;
+        public MeshIndexTriangle tri;
+        public MeshVertex[] attachedVerts;
+    }
+
+    public struct MeshEdgeContraction
+    {
+        public MeshEdgeContraction(MeshVertex vert0, MeshVertex vert1)
+        {
+            v0 = vert0;
+            v1 = vert1;
+            contractedPosition = new Vector3();
+            error = 0;
+        }
+        public MeshVertex v0, v1;
+        public Vector3 contractedPosition;
+        public double error;
     }
 }

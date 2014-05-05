@@ -16,7 +16,7 @@ namespace panelfar
             Matrix4x4 partUpMatrix = p.transform.worldToLocalMatrix;
 
             List<Vector3> vertexList = new List<Vector3>();
-            List<meshIndexTriangle> vertexForTriList = new List<meshIndexTriangle>();
+            List<MeshIndexTriangle> vertexForTriList = new List<MeshIndexTriangle>();
 
             int vertexOffset = 0;
             foreach (Transform t in p.FindModelComponents<Transform>())
@@ -41,7 +41,7 @@ namespace panelfar
                 }
                 for (int i = 0; i < m.triangles.Length; i += 3)
                 {
-                    meshIndexTriangle tri = new meshIndexTriangle();
+                    MeshIndexTriangle tri = new MeshIndexTriangle();
                     tri.v0 = m.triangles[i] + vertexOffset;
                     tri.v1 = m.triangles[i + 1] + vertexOffset;
                     tri.v2 = m.triangles[i + 2] + vertexOffset;

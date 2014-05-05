@@ -2,27 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace panelfar
 {
-    public class PANELFARQuadric
+    public class Quadric
     {
         private double a2;
         private double ab, b2;
         private double ac, bc, c2;
         private double ad, bd, cd, d2;
 
-        public double area
-        {
-            get { return area; }
-            private set { area = value; }
-        }
+        public double area;
 
-        public PANELFARQuadric(): this(0, 0, 0, 0, 0)
+        public Quadric(): this(0, 0, 0, 0, 0)
         {
         }
 
-        public PANELFARQuadric(double a, double b, double c, double d, double r)
+        public Quadric(double a, double b, double c, double d, double r)
         {
             a2 = a * a;
             ab = a * b;
@@ -37,7 +34,27 @@ namespace panelfar
             area = r;
         }
 
-        public double evaluate(double x, double y, double z)
+        public MatrixSym3x3 Tensor()
+        {
+            return new MatrixSym3x3(a2, ab, ac, b2, bc, c2);
+        }
+
+        public Vector3d Vector()
+        {
+            return new Vector3d(ad, bd, cd);
+        }
+
+        public double Offset()
+        {
+            return d2;
+        }
+
+        public double Evaluate(Vector3d vec)
+        {
+            return Evaluate(vec.x, vec.y, vec.z);
+        }
+
+        public double Evaluate(double x, double y, double z)
         {
             return x * x * a2 + 2 * x * y * ab + 2 * x * z * ac + 2 * x * ad
             + y * y * b2 + 2 * y * z * bc + 2 * y * bd
@@ -45,8 +62,18 @@ namespace panelfar
             + d2;
         }
 
+        public bool Optimize(ref Vector3 newVert, double epsilon)
+        {
+            MatrixSym3x3 invMat;
+            double det = this.Tensor().DetAndInverse(out invMat);
+            if (PANELFARMathUtils.Approximately(det, 0, epsilon))
+                return false;
 
-        public static PANELFARQuadric operator +(PANELFARQuadric Q1, PANELFARQuadric Q2)
+            newVert = -(invMat * this.Vector());
+            return true;
+        }
+
+        public static Quadric operator +(Quadric Q1, Quadric Q2)
         {
             // Accumulate area
             Q1.area += Q2.area;
@@ -60,7 +87,7 @@ namespace panelfar
             return Q1;
         }
 
-        public static PANELFARQuadric operator -(PANELFARQuadric Q1, PANELFARQuadric Q2)
+        public static Quadric operator -(Quadric Q1, Quadric Q2)
         {
             // Accumulate area
             Q1.area -= Q2.area;
@@ -74,7 +101,7 @@ namespace panelfar
             return Q1;
         }
 
-        public static PANELFARQuadric operator *(PANELFARQuadric Q1, double s)
+        public static Quadric operator *(Quadric Q1, double s)
         {
             // Scale coefficients
             Q1.a2 *= s; Q1.ab *= s; Q1.ac *= s; Q1.ad *= s;

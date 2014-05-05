@@ -26,7 +26,7 @@ namespace panelfar
         }
 
         public Vector3[] vertexes;
-        public meshIndexTriangle[] triangles;
+        public MeshIndexTriangle[] triangles;
         public Part part;
 
         public void DebugDrawMesh()
@@ -49,7 +49,7 @@ namespace panelfar
             GL.wireframe = true;
             GL.Color(Color.yellow);
 
-            foreach(meshIndexTriangle tri in triangles) //triangles are defined by threes, so this makes sense
+            foreach(MeshIndexTriangle tri in triangles) //triangles are defined by threes, so this makes sense
             {
                 Vector3 v0, v1, v2;
 
