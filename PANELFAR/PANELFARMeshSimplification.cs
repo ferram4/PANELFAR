@@ -32,7 +32,111 @@ namespace panelfar
             //Calculate point that each pair contraction will contract to if it is to be done
             CalculateTargetPositionForAllPairContractions(ref pairContractions, verts, vertQuadrics);
 
+            MaxHeap<MeshPairContraction> pairHeap = new MaxHeap<MeshPairContraction>();
+            foreach (MeshPairContraction pair in pairContractions)
+                pairHeap.Add(pair);
+
+            DecimateVertices((int)Math.Floor(indexTris.Length * 0.5), ref pairHeap, ref verts, ref indexTris, ref trisAttachedToVerts, ref vertQuadrics);
+
             return mesh;
+        }
+
+        public static void DecimateVertices(int targetFaces, ref MaxHeap<MeshPairContraction> pairHeap, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
+        {
+            int validFaces = indexTris.Length;
+
+            while(validFaces > targetFaces)
+            {
+                MeshPairContraction pair = pairHeap.ExtractDominating();
+                ComputeContraction(ref pair, trisAttachedToVerts);
+                validFaces -= ApplyContraction(ref pair, ref pairHeap, ref verts, ref indexTris, ref trisAttachedToVerts, ref vertQuadrics);
+            }
+        }
+
+        public static int ApplyContraction(ref MeshPairContraction pair, ref MaxHeap<MeshPairContraction> pairHeap, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
+        {
+            int removedFaces = pair.deletedFaces.Count;
+
+            //Move v0, clear v1
+            verts[pair.v0] = pair.contractedPosition;
+            verts[pair.v1] = Vector3.zero;
+
+            //Clear out all the tris attached to a non-existence vertex
+            trisAttachedToVerts[pair.v1] = null;
+
+            //Accumulate quadrics
+            vertQuadrics[pair.v0] += vertQuadrics[pair.v1];
+            vertQuadrics[pair.v1] = null;
+
+            //Adjust deformed triangles
+            foreach (int changedTri in pair.deformedFaces)
+            {
+                MeshIndexTriangle tri = indexTris[changedTri];
+                if (tri.v0 == pair.v1)
+                    tri.v0 = pair.v0;
+                else if (tri.v1 == pair.v1)
+                    tri.v1 = pair.v0;
+                else
+                    tri.v2 = pair.v0;
+
+                indexTris[changedTri] = tri;
+                if (!trisAttachedToVerts[pair.v0].Contains(changedTri))
+                    trisAttachedToVerts[pair.v0].Add(changedTri);
+            }
+
+            //Clear deleted triangles
+            foreach(int deletedTri in pair.deletedFaces)
+            {
+                indexTris[deletedTri] = new MeshIndexTriangle();
+            }
+
+            for (int i = 0; i < pairHeap.Count; i++)
+            {
+                MeshPairContraction otherPair = pairHeap.ElementAt(i);
+                if (otherPair.v0 == pair.v1)
+                    otherPair.v0 = pair.v0;
+                else if (otherPair.v1 == pair.v1)
+                    otherPair.v1 = pair.v0;
+
+                if (otherPair.v0 == pair.v0 || otherPair.v1 == pair.v0)
+                    CalculateTargetPositionForPairContraction(ref otherPair, verts, vertQuadrics);
+            }
+
+            return removedFaces;
+        }
+
+        public static void ComputeContraction(ref MeshPairContraction pair, List<int>[] trisAttachedToVerts)
+        {
+            //This contains a list of all tris that will be changed by this contraction; boolean indicates whether they will be removed or not
+            Dictionary<int, bool> trisToChange = new Dictionary<int, bool>();
+
+            pair.deformedFaces.Clear();
+            pair.deletedFaces.Clear();
+
+            //Iterate through every triangle attached to vertex 0 of this pair and add them to the dict
+            foreach(int triIndex in trisAttachedToVerts[pair.v0])
+            {
+                trisToChange.Add(triIndex, false);
+            }
+
+            foreach (int triIndex in trisAttachedToVerts[pair.v1])
+            {
+                //if the tri is already there, it will become degenerate during this contraction and should be removed
+                if (trisToChange.ContainsKey(triIndex))
+                    trisToChange[triIndex] = true;
+                //else, add it and it will simply be deformed
+                else
+                    trisToChange.Add(triIndex, false);
+            }
+
+            //Now, divide them into the appropriate lists
+            foreach(KeyValuePair<int, bool> triIndex in trisToChange)
+            {
+                if (triIndex.Value)
+                    pair.deletedFaces.Add(triIndex.Key);
+                else
+                    pair.deformedFaces.Add(triIndex.Key);
+            }
         }
 
         public static List<MeshPairContraction> GeneratePairContractions(MeshIndexTriangle[] indexTris)
@@ -108,7 +212,6 @@ namespace panelfar
                 trisAttachedToVerts[tri.v1].Add(i);
                 trisAttachedToVerts[tri.v2].Add(i);
             }
-
 
             return trisAttachedToVerts;
         }
