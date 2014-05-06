@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PANELFARControlObject.cs" />
+    <Compile Include="PANELFARHeap.cs" />
     <Compile Include="PANELFARMathUtils.cs" />
     <Compile Include="PANELFARMatrix3.cs" />
     <Compile Include="PANELFARMeshSimplification.cs" />

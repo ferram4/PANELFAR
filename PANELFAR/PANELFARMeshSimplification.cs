@@ -12,182 +12,132 @@ namespace panelfar
         //Take the raw part geometry and simplify it so that further simplification of the entire vessel is faster
         public static PANELFARPartLocalMesh PreProcessLocalMesh(PANELFARPartLocalMesh mesh)
         {
-            MeshVertex[] meshVertices = CreateVertexConnectivityArray(mesh);
-            MeshTriangle[] meshTriangles = TrianglesFromVertexConnectivity(meshVertices);
-            MeshEdgeContraction[] meshEdgeContractions = GenerateEdgesForContraction(meshTriangles);
+            //Array of vertices; indexing must not change
+            Vector3[] verts = new Vector3[mesh.vertexes.Length];
+            mesh.vertexes.CopyTo(verts, 0);
 
-            Dictionary<MeshVertex, Quadric> quadrics = CalculateQuadrics(meshTriangles, meshVertices);
+            //Array of triangles; each triangle points to an index in verts
+            MeshIndexTriangle[] indexTris = new MeshIndexTriangle[mesh.triangles.Length];
+            mesh.triangles.CopyTo(indexTris, 0);
 
-            CalculateTargetPositionForEdgeContractions(ref meshEdgeContractions, quadrics);
+            //Array of a list of triangles that contain a given vertex; indexing is same as verts, each index in list points to an index in indexTris
+            List<int>[] trisAttachedToVerts = GetTrisAttachedToVerts(verts, indexTris);
 
-            
+            //Array of quadrics associated with a particular vertex; indexing is same as verts
+            Quadric[] vertQuadrics = CalculateVertQuadrics(verts, indexTris);
+
+            //A list of possible vertex pairs that can be contracted into a single point
+            List<MeshPairContraction> pairContractions = GeneratePairContractions(indexTris);
+
+            //Calculate point that each pair contraction will contract to if it is to be done
+            CalculateTargetPositionForAllPairContractions(ref pairContractions, verts, vertQuadrics);
 
             return mesh;
         }
 
-        public static void CalculateTargetPositionForEdgeContractions(ref MeshEdgeContraction[] meshEdgeContractions, Dictionary<MeshVertex, Quadric> quadrics)
+        public static List<MeshPairContraction> GeneratePairContractions(MeshIndexTriangle[] indexTris)
         {
-            for (int i = 0; i < meshEdgeContractions.Length; i++)
-                CalculateTargetPositionForEdgeContraction(ref meshEdgeContractions[i], quadrics);
+            List<MeshPairContraction> pairContractions = new List<MeshPairContraction>();
+
+            foreach(MeshIndexTriangle tri in indexTris)
+            {
+                MeshPairContraction e0 = new MeshPairContraction(tri.v0, tri.v1),
+                    e1 = new MeshPairContraction(tri.v1, tri.v2),
+                    e2 = new MeshPairContraction(tri.v2, tri.v0);
+
+                if (!pairContractions.Contains(e0))
+                    pairContractions.Add(e0);
+                if (!pairContractions.Contains(e1))
+                    pairContractions.Add(e1);
+                if (!pairContractions.Contains(e2))
+                    pairContractions.Add(e2);
+            }
+
+            return pairContractions;
         }
 
-        public static void CalculateTargetPositionForEdgeContraction(ref MeshEdgeContraction edge, Dictionary<MeshVertex, Quadric> quadrics)
+        public static void CalculateTargetPositionForAllPairContractions(ref List<MeshPairContraction> pairContractions, Vector3[] verts, Quadric[] vertQuadrics)
         {
-            MeshVertex v0 = edge.v0, v1 = edge.v1;
-            Quadric Q0 = quadrics[v0], Q1 = quadrics[v1];
+            for (int i = 0; i < pairContractions.Count; i++)
+            {
+                MeshPairContraction pair = pairContractions[i];
+                CalculateTargetPositionForPairContraction(ref pair, verts, vertQuadrics);
+                pairContractions[i] = pair;
+            }
+        }
+            
+        public static void CalculateTargetPositionForPairContraction(ref MeshPairContraction pair, Vector3[] verts, Quadric[] vertQuadrics)
+        {
+            Vector3 v0 = verts[pair.v0], v1 = verts[pair.v1];
+            Quadric Q0 = vertQuadrics[pair.v0], Q1 = vertQuadrics[pair.v1];
             Quadric Q = Q0 + Q1;
 
-
-            if (Q.Optimize(ref edge.contractedPosition, 1e-12))
-                edge.error = -Q.Evaluate(edge.contractedPosition);
+            if (Q.Optimize(ref pair.contractedPosition, 1e-12))
+                pair.error = -Q.Evaluate(pair.contractedPosition);
             else
             {
-                double ei = Q.Evaluate(v0.vert), ej = Q.Evaluate(v1.vert);
+                double ei = Q.Evaluate(v0), ej = Q.Evaluate(v1);
                 if (ei < ej)
                 {
-                    edge.error = -ei;
-                    edge.contractedPosition = v0.vert;
+                    pair.error = -ei;
+                    pair.contractedPosition = v0;
                 }
                 else
                 {
-                    edge.error = -ej;
-                    edge.contractedPosition = v1.vert;
+                    pair.error = -ej;
+                    pair.contractedPosition = v1;
                 }
             }
         }
 
-        public static MeshEdgeContraction[] GenerateEdgesForContraction(MeshTriangle[] meshTriangles)
+        //This returns an array that contains (in each element) a list of indexes that specify which MeshIndexTriangles (in indexTris) are connected to which Vector3s (in verts)
+        public static List<int>[] GetTrisAttachedToVerts(Vector3[] verts, MeshIndexTriangle[] indexTris)
         {
-            List<MeshEdgeContraction> meshEdges = new List<MeshEdgeContraction>();
+            List<int>[] trisAttachedToVerts = new List<int>[verts.Length];
 
-            foreach(MeshTriangle tri in meshTriangles)
+            for (int i = 0; i < trisAttachedToVerts.Length; i++)
             {
-                MeshEdgeContraction e0, e1, e2, e0_, e1_, e2_;
-                MeshVertex v0 = tri.attachedVerts[0], v1 = tri.attachedVerts[1], v2 = tri.attachedVerts[2];
-
-                e0 = new MeshEdgeContraction(v0, v1);
-                e0_ = new MeshEdgeContraction(v1, v0);
-                if(!(meshEdges.Contains(e0) || meshEdges.Contains(e0_)))
-                    meshEdges.Add(e0);
-                
-                e1 = new MeshEdgeContraction(v1, v2);
-                e1_ = new MeshEdgeContraction(v2, v1);
-                if(!(meshEdges.Contains(e1) || meshEdges.Contains(e1_)))
-                    meshEdges.Add(e1);
-
-                e2 = new MeshEdgeContraction(v2, v0);
-                e2_ = new MeshEdgeContraction(v0, v2);
-                if (!(meshEdges.Contains(e2) || meshEdges.Contains(e2_)))
-                    meshEdges.Add(e2);
+                trisAttachedToVerts[i] = new List<int>();
             }
 
-            return meshEdges.ToArray();
+            for (int i = 0; i < indexTris.Length; i++)
+            {
+                MeshIndexTriangle tri = indexTris[i];
+
+                trisAttachedToVerts[tri.v0].Add(i);
+                trisAttachedToVerts[tri.v1].Add(i);
+                trisAttachedToVerts[tri.v2].Add(i);
+            }
+
+
+            return trisAttachedToVerts;
         }
 
-        public static Dictionary<MeshVertex, Quadric> CalculateQuadrics(MeshTriangle[] meshTriangles, MeshVertex[] meshVertices)
+        public static Quadric[] CalculateVertQuadrics(Vector3[] verts, MeshIndexTriangle[] indexTris)
         {
-            Dictionary<MeshVertex, Quadric> quadrics = new Dictionary<MeshVertex, Quadric>();
+            Quadric[] vertQuadrics = new Quadric[verts.Length];
 
-            foreach(MeshVertex vert in meshVertices)
-                quadrics.Add(vert, new Quadric());
+            for (int i = 0; i < vertQuadrics.Length; i++ )
+                vertQuadrics[i] = new Quadric();
 
-            foreach(MeshTriangle tri in meshTriangles)
+            foreach (MeshIndexTriangle tri in indexTris)
             {
-                MeshVertex v0, v1, v2;
-                v0 = tri.attachedVerts[0];
-                v1 = tri.attachedVerts[1];
-                v2 = tri.attachedVerts[2];
-                Vector4 p = PANELFARTriangleUtils.triangle_plane(v0.vert, v1.vert, v2.vert);
-                double area = PANELFARTriangleUtils.triangle_area(v0.vert, v1.vert, v2.vert);
+                Vector3 v0, v1, v2;
+                v0 = verts[tri.v0];
+                v1 = verts[tri.v1];
+                v2 = verts[tri.v2];
+                Vector4 p = PANELFARTriangleUtils.triangle_plane(v0, v1, v2);
+                double area = PANELFARTriangleUtils.triangle_area(v0, v1, v2);
                 Quadric Q = new Quadric(p.x, p.y, p.z, p.w, area);
 
                 // Area-weight quadric and add it into the three quadrics for the corners
                 Q *= Q.area;
-                quadrics[v0] += Q;
-                quadrics[v1] += Q;
-                quadrics[v2] += Q;
+                vertQuadrics[tri.v0] += Q;
+                vertQuadrics[tri.v1] += Q;
+                vertQuadrics[tri.v2] += Q;
             }
 
-            return quadrics;
-        }
-
-        public static MeshTriangle[] TrianglesFromVertexConnectivity(MeshVertex[] meshVertices)
-        {
-            Dictionary<MeshIndexTriangle, List<MeshVertex>> triVertDict = new Dictionary<MeshIndexTriangle, List<MeshVertex>>();
-
-            foreach(MeshVertex vert in meshVertices)
-            {
-                MeshIndexTriangle[] tris = vert.attachedTris;
-                List<MeshVertex> tmpList;
-
-                foreach(MeshIndexTriangle tri in tris)
-                    if(triVertDict.TryGetValue(tri, out tmpList))
-                    {
-                        tmpList.Add(vert);
-                        triVertDict[tri] = tmpList;
-                    }
-                    else
-                    {
-                        tmpList = new List<MeshVertex>();
-                        tmpList.Add(vert);
-                        triVertDict.Add(tri, tmpList);
-                    }
-            }
-
-            MeshTriangle[] meshTriangles = new MeshTriangle[triVertDict.Count];
-
-            int i = 0;
-            foreach (KeyValuePair<MeshIndexTriangle, List<MeshVertex>> vertTris in triVertDict)
-            {
-                MeshTriangle meshTriangle = new MeshTriangle(vertTris.Key, vertTris.Value.ToArray());
-
-                meshTriangles[i] = meshTriangle;
-                i++;
-            }
-
-            return meshTriangles;
-        }
-
-        public static MeshVertex[] CreateVertexConnectivityArray(PANELFARPartLocalMesh mesh)
-        {
-            Dictionary<int, List<MeshIndexTriangle>> vertexTriDict = new Dictionary<int, List<MeshIndexTriangle>>();
-
-            foreach(MeshIndexTriangle tri in mesh.triangles)
-            {
-                UpdateVertexTriDict(ref vertexTriDict, tri, tri.v0);
-                UpdateVertexTriDict(ref vertexTriDict, tri, tri.v1);
-                UpdateVertexTriDict(ref vertexTriDict, tri, tri.v2);
-            }
-
-            MeshVertex[] meshVertices = new MeshVertex[vertexTriDict.Count];
-
-            int i = 0;
-            foreach(KeyValuePair<int, List<MeshIndexTriangle>> vertTris in vertexTriDict)
-            {
-                Vector3 unconnectedVert = mesh.vertexes[vertTris.Key];
-                MeshVertex meshVert = new MeshVertex(unconnectedVert, vertTris.Value.ToArray());
-
-                meshVertices[i] = meshVert;
-                i++;
-            }
-
-            return meshVertices;
-        }
-
-        public static void UpdateVertexTriDict(ref Dictionary<int, List<MeshIndexTriangle>> vertexTriDict, MeshIndexTriangle tri, int vertIndex)
-        {
-            List<MeshIndexTriangle> tmpList;
-            if (vertexTriDict.TryGetValue(vertIndex, out tmpList))
-            {
-                tmpList.Add(tri);
-                vertexTriDict[vertIndex] = tmpList;
-            }
-            else
-            {
-                tmpList = new List<MeshIndexTriangle>();
-                tmpList.Add(tri);
-                vertexTriDict.Add(vertIndex, tmpList);
-            }
+            return vertQuadrics;
         }
     }
 }
