@@ -19,8 +19,10 @@ namespace panelfar
         public int v1;
     }
     
-    public struct MeshIndexTriangle
+    public class MeshIndexTriangle : IEquatable<MeshIndexTriangle>
     {
+        public MeshIndexTriangle() : this(0, 0, 0) { }
+
         public MeshIndexTriangle(int vert0, int vert1, int vert2)
         {
             v0 = vert0;
@@ -31,6 +33,28 @@ namespace panelfar
         public int v0;
         public int v1;
         public int v2;
+        
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            MeshIndexTriangle other = (MeshIndexTriangle)obj;
+            return Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.v0.GetHashCode() + this.v1.GetHashCode() + this.v2.GetHashCode();
+        }
+
+        public bool Equals(MeshIndexTriangle tri)
+        {
+            if (this.GetHashCode() == tri.GetHashCode())
+                return true;
+
+            return false;
+        }
     }
 
     public struct MeshIndexQuad
