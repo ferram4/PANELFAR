@@ -50,8 +50,27 @@ namespace panelfar
 
         public bool Equals(MeshIndexTriangle tri)
         {
-            if (this.GetHashCode() == tri.GetHashCode())
-                return true;
+            if (this.v0.Equals(tri.v0))
+            {
+                if (this.v1.Equals(tri.v1) && this.v2.Equals(tri.v2))
+                    return true;
+                if (this.v1.Equals(tri.v2) && this.v2.Equals(tri.v1))
+                    return true;
+            }
+            if (this.v0.Equals(tri.v1))
+            {
+                if (this.v1.Equals(tri.v0) && this.v2.Equals(tri.v2))
+                    return true;
+                if (this.v1.Equals(tri.v2) && this.v2.Equals(tri.v0))
+                    return true;
+            }
+            if (this.v0.Equals(tri.v2))
+            {
+                if (this.v1.Equals(tri.v1) && this.v2.Equals(tri.v0))
+                    return true;
+                if (this.v1.Equals(tri.v0) && this.v2.Equals(tri.v1))
+                    return true;
+            }
 
             return false;
         }

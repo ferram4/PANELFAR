@@ -56,9 +56,15 @@ namespace panelfar
 
         public double Evaluate(double x, double y, double z)
         {
-            return x * x * a2 + 2 * x * y * ab + 2 * x * z * ac + 2 * x * ad
-            + y * y * b2 + 2 * y * z * bc + 2 * y * bd
-            + z * z * c2 + 2 * z * cd
+            return x * x * a2
+                + 2 * x * y * ab
+                + 2 * x * z * ac
+                + 2 * x * ad
+            + y * y * b2
+            + 2 * y * z * bc
+            + 2 * y * bd
+            + z * z * c2
+            + 2 * z * cd
             + d2;
         }
 

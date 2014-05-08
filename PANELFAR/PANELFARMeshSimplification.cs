@@ -84,6 +84,9 @@ namespace panelfar
                     //Get the pair contraction with the least error associated with it
                     MeshPairContraction pair = pairContractions.ExtractDominating();
 
+                    debug.AppendLine("Contraction between vertices at indicies: " + pair.v0 + " and " + pair.v1);
+                    debug.AppendLine("Tris attached to v0: " + trisAttachedToVerts[pair.v0].Count + " Tris attached to v1: " + trisAttachedToVerts[pair.v1].Count);
+
                     //Get faces that will be deleted / changed by contraction
                     ComputeContraction(ref pair, indexTris, trisAttachedToVerts);
 
@@ -92,6 +95,25 @@ namespace panelfar
 
                     counter++;
                 }
+                for(int i = 0; i < indexTris.Length; i++)
+                {
+                    MeshIndexTriangle tri = indexTris[i];
+                    if (tri == null)
+                        continue;
+                    if (trisAttachedToVerts[tri.v0] == null)
+                    {
+                        debug.AppendLine("Tri at index " + i + " points to nonexistent vertex at index " + tri.v0);
+                    }
+                    if (trisAttachedToVerts[tri.v1] == null)
+                    {
+                        debug.AppendLine("Tri at index " + i + " points to nonexistent vertex at index " + tri.v1);
+                    }
+                    if (trisAttachedToVerts[tri.v2] == null)
+                    {
+                        debug.AppendLine("Tri at index " + i + " points to nonexistent vertex at index " + tri.v2);
+                    }
+                }
+
                 debug.AppendLine("Final: Faces: " + validFaces);
             }
             catch (Exception e)
@@ -174,16 +196,18 @@ namespace panelfar
                         j--;                    //Make sure not to skip over a duplicate
                     }
                 }
+                if(iItem.v1 == iItem.v0)
+                {
+                    pairList.RemoveAt(i);   //Remove degenerate edge
+                    count--;                //Reduce length to iterate over
+                    i--;                    //Make sure not to skip over a duplicate
+                    continue;
+                }
                 CalculateTargetPositionForPairContraction(ref iItem, verts, vertQuadrics);
                 pairList[i] = iItem;
             }
-            List<MeshPairContraction> secondPairList = new List<MeshPairContraction>();
 
-            foreach (MeshPairContraction newPair in pairList)
-                if (newPair != null)
-                    secondPairList.Add(newPair);
-
-            pairContractions = new MinHeap<MeshPairContraction>(secondPairList);
+            pairContractions = new MinHeap<MeshPairContraction>(pairList);
 
             return removedFaces;
         }

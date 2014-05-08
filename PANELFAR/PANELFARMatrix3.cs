@@ -37,9 +37,11 @@ namespace panelfar
 
         public double Det()
         {
-            return m00 * (m11 * m22 - m12 * m12)
-                - m01 * (m01 * m22 - m02 * m12)
-                + m12 * (m01 * m12 - m11 * m02);
+            return m00 * m11 * m22
+                + 2 * m01 * m12 * m02
+                - m02 * m02 * m11
+                - m01 * m01 * m22
+                - m12 * m12 * m00;
         }
 
         public static MatrixSym3x3 operator * (MatrixSym3x3 M, double s)
