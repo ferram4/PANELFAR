@@ -6,13 +6,11 @@ using UnityEngine;
 
 namespace panelfar
 {
-    public class MatrixSym3x3
+    public struct MatrixSym3x3
     {
         private double m00;
         private double m01, m11;
         private double m02, m12, m22;
-
-        public MatrixSym3x3() : this(0, 0, 0, 0, 0, 0) { }
 
         public MatrixSym3x3(double a00, double a01, double a02, double a11, double a12, double a22)
         {

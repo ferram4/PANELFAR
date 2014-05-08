@@ -137,7 +137,7 @@ namespace panelfar
             verts[pair.v1] = Vector3.zero;
 
             foreach (int triIndex in trisAttachedToVerts[pair.v1])
-                if (!pair.deletedFaces.Contains(triIndex))
+                if (!pair.deletedFaces.Contains(triIndex) && !trisAttachedToVerts[pair.v0].Contains(triIndex))
                     trisAttachedToVerts[pair.v0].Add(triIndex);
 
             //Clear out all the tris attached to a non-existent vertex
@@ -145,7 +145,7 @@ namespace panelfar
 
             //Accumulate quadrics, clear unused one
             vertQuadrics[pair.v0] += vertQuadrics[pair.v1];
-            vertQuadrics[pair.v1] = null;
+            vertQuadrics[pair.v1] = new Quadric();
 
             //Adjust deformed triangles
             foreach (int changedTri in pair.deformedFaces)

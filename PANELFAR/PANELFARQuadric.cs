@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace panelfar
 {
-    public class Quadric
+    public struct Quadric
     {
         private double a2;
         private double ab, b2;
@@ -14,10 +14,6 @@ namespace panelfar
         private double ad, bd, cd, d2;
 
         public double area;
-
-        public Quadric(): this(0, 0, 0, 0, 0)
-        {
-        }
 
         public Quadric(double a, double b, double c, double d, double r)
         {
@@ -30,6 +26,7 @@ namespace panelfar
             bd = b * d;
             c2 = c * c;
             cd = c * d;
+            d2 = d * d;
 
             area = r;
         }
