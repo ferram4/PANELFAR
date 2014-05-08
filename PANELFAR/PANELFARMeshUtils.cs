@@ -101,7 +101,7 @@ namespace panelfar
         public MeshVertex[] attachedVerts;
     }
 
-    public struct MeshPairContraction : IComparable, IEquatable<MeshPairContraction>
+    public class MeshPairContraction : IComparable, IEquatable<MeshPairContraction>
     {
         public MeshPairContraction(int vert0, int vert1)
         {
@@ -123,27 +123,7 @@ namespace panelfar
         {
             return this.error.CompareTo(((MeshPairContraction)obj).error);
         }
-
-        public static bool operator > (MeshPairContraction pair1, MeshPairContraction pair2)
-        {
-            return pair1.error > pair2.error;
-        }
-
-        public static bool operator <(MeshPairContraction pair1, MeshPairContraction pair2)
-        {
-            return pair1.error < pair2.error;
-        }
-
-        public static bool operator ==(MeshPairContraction pair1, MeshPairContraction pair2)
-        {
-            return pair1.Equals(pair2);
-        }
-
-        public static bool operator !=(MeshPairContraction pair1, MeshPairContraction pair2)
-        {
-            return !pair1.Equals(pair2);
-        }
-
+        
         public override bool Equals(object obj)
         {
             MeshPairContraction other = (MeshPairContraction)obj;
@@ -152,17 +132,33 @@ namespace panelfar
 
         public override int GetHashCode()
         {
-            return this.v0.GetHashCode() + this.v1.GetHashCode();
+            return (this.v0.GetHashCode() + this.v1.GetHashCode());
         }
 
         public bool Equals(MeshPairContraction pair)
         {
-            if (pair.v0 == this.v0 && pair.v1 == this.v1)
+            if (this.v0.Equals(pair.v0) && this.v1.Equals(pair.v1))
                 return true;
-            if (pair.v0 == this.v1 && pair.v1 == this.v0)
+            if (this.v0.Equals(pair.v1) && this.v1.Equals(pair.v0))
                 return true;
 
             return false;
+        }
+
+        public static bool operator ==(MeshPairContraction pair1, MeshPairContraction pair2)
+        {
+            if ((object)pair1 == null || ((object)pair2) == null)
+                return System.Object.Equals(pair1, pair2);
+
+            return pair1.Equals(pair2);
+        }
+
+        public static bool operator !=(MeshPairContraction pair1, MeshPairContraction pair2)
+        {
+            if ((object)pair1 == null || ((object)pair2) == null)
+                return !System.Object.Equals(pair1, pair2);
+
+            return !pair1.Equals(pair2);
         }
     }
 }

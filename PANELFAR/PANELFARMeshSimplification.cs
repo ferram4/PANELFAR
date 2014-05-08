@@ -27,14 +27,7 @@ namespace panelfar
             Quadric[] vertQuadrics = CalculateVertQuadrics(verts, indexTris);
 
             //A list of possible vertex pairs that can be contracted into a single point
-            List<MeshPairContraction> pairContractions = GeneratePairContractions(indexTris);
-
-            //Calculate point that each pair contraction will contract to if it is to be done
-            CalculateTargetPositionForAllPairContractions(ref pairContractions, verts, vertQuadrics);
-
-            Debug.Log("Sorting...");
-            pairContractions.Sort();
-            Debug.Log("Sort complete");
+            MinHeap<MeshPairContraction> pairContractions = GeneratePairContractions(indexTris, verts, vertQuadrics);
 
             int faces = (int)Math.Floor(indexTris.Length * 0.5);
 
@@ -48,7 +41,7 @@ namespace panelfar
             for (int i = 0; i < verts.Length; i++)
             {
                 Vector3 v = verts[i];
-                if (v != Vector3.zero)
+                if (trisAttachedToVerts[i] != null)
                 {
                     beforeIndexAfterIndex.Add(i, currentIndex);
                     currentIndex++;
@@ -76,29 +69,44 @@ namespace panelfar
             return mesh;
         }
 
-        public static int DecimateVertices(int targetFaces, ref List<MeshPairContraction> pairContractions, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
+        public static int DecimateVertices(int targetFaces, ref MinHeap<MeshPairContraction> pairContractions, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
         {
             int validFaces = indexTris.Length;
             int counter = 1;
             StringBuilder debug = new StringBuilder();
             debug.AppendLine("Target Faces: " + targetFaces);
-            while(validFaces >= targetFaces)
+            try
             {
-                debug.AppendLine("Iteration: " + counter + " Faces: " + validFaces);
-                MeshPairContraction pair = pairContractions[0];
-                pairContractions.RemoveAt(0);
-                ComputeContraction(ref pair, indexTris, trisAttachedToVerts);
-                validFaces -= ApplyContraction(ref pair, ref pairContractions, ref verts, ref indexTris, ref trisAttachedToVerts, ref vertQuadrics);
-                counter++;
+                while (validFaces > targetFaces)
+                {
+                    debug.AppendLine("Iteration: " + counter + " Faces: " + validFaces);
+
+                    //Get the pair contraction with the least error associated with it
+                    MeshPairContraction pair = pairContractions.ExtractDominating();
+
+                    //Get faces that will be deleted / changed by contraction
+                    ComputeContraction(ref pair, indexTris, trisAttachedToVerts);
+
+                    //Act on faces, delete extra vertex, change all references to second vertex
+                    validFaces -= ApplyContraction(ref pair, ref pairContractions, ref verts, ref indexTris, ref trisAttachedToVerts, ref vertQuadrics);
+
+                    counter++;
+                }
+                debug.AppendLine("Final: Faces: " + validFaces);
+            }
+            catch (Exception e)
+            {
+                debug.AppendLine("Error: " + e.Message);
+                debug.AppendLine("Stack trace");
+                debug.AppendLine(e.StackTrace);
             }
 
-            debug.AppendLine("Final: Faces: " + validFaces);
 
             Debug.Log(debug.ToString());
             return validFaces;
         }
 
-        public static int ApplyContraction(ref MeshPairContraction pair, ref List<MeshPairContraction> pairContractions, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
+        public static int ApplyContraction(ref MeshPairContraction pair, ref MinHeap<MeshPairContraction> pairContractions, ref Vector3[] verts, ref MeshIndexTriangle[] indexTris, ref List<int>[] trisAttachedToVerts, ref Quadric[] vertQuadrics)
         {
             int removedFaces = pair.deletedFaces.Count;
 
@@ -106,10 +114,14 @@ namespace panelfar
             verts[pair.v0] = pair.contractedPosition;
             verts[pair.v1] = Vector3.zero;
 
-            //Clear out all the tris attached to a non-existence vertex
+            foreach (int triIndex in trisAttachedToVerts[pair.v1])
+                if (!pair.deletedFaces.Contains(triIndex))
+                    trisAttachedToVerts[pair.v0].Add(triIndex);
+
+            //Clear out all the tris attached to a non-existent vertex
             trisAttachedToVerts[pair.v1] = null;
 
-            //Accumulate quadrics
+            //Accumulate quadrics, clear unused one
             vertQuadrics[pair.v0] += vertQuadrics[pair.v1];
             vertQuadrics[pair.v1] = null;
 
@@ -117,16 +129,14 @@ namespace panelfar
             foreach (int changedTri in pair.deformedFaces)
             {
                 MeshIndexTriangle tri = indexTris[changedTri];
-                if (tri.v0 == pair.v1)
+                if (tri.v0.Equals(pair.v1))
                     tri.v0 = pair.v0;
-                else if (tri.v1 == pair.v1)
+                else if (tri.v1.Equals(pair.v1))
                     tri.v1 = pair.v0;
                 else
                     tri.v2 = pair.v0;
 
                 indexTris[changedTri] = tri;
-                if (!trisAttachedToVerts[pair.v0].Contains(changedTri))
-                    trisAttachedToVerts[pair.v0].Add(changedTri);
             }
 
             //Clear deleted triangles
@@ -135,32 +145,45 @@ namespace panelfar
                 indexTris[deletedTri] = null;
             }
 
-            List<MeshPairContraction> dupeIndices = new List<MeshPairContraction>();
+            List<MeshPairContraction> pairList = pairContractions.ToList();
 
             for (int i = 0; i < pairContractions.Count; i++)
             {
-                MeshPairContraction otherPair = pairContractions[i];
-                if (otherPair.v0 == pair.v1)
+                MeshPairContraction otherPair = pairList[i];
+                if (otherPair.v0.Equals(pair.v1))
+                {
                     otherPair.v0 = pair.v0;
-                if (otherPair.v1 == pair.v1)
+                }
+                else if (otherPair.v1.Equals(pair.v1))
+                {
                     otherPair.v1 = pair.v0;
-
-                for (int j = 0; j < pairContractions.Count; j++)
-                    if (i == j)
-                        continue;
-                    else if (pairContractions[j].Equals(otherPair))
-                        dupeIndices.Add(pairContractions[j]);
-
-
-                if (!dupeIndices.Contains(otherPair) && (otherPair.v0 == pair.v0 || otherPair.v1 == pair.v0))
-                    CalculateTargetPositionForPairContraction(ref otherPair, verts, vertQuadrics);
-
-                pairContractions[i] = otherPair;
+                }
+                pairList[i] = otherPair;
             }
-            foreach (MeshPairContraction dupe in dupeIndices)
-                pairContractions.Remove(dupe);
 
-            pairContractions.Sort();
+            int count = pairList.Count;
+            for (int i = 0; i < count; i++ )
+            {
+                MeshPairContraction iItem = pairList[i];
+                for(int j = i + 1; j < count; j++)
+                {
+                    if (pairList[j].Equals(iItem))
+                    {
+                        pairList.RemoveAt(j);   //Remove duplicate element
+                        count--;                //Reduce length to iterate over
+                        j--;                    //Make sure not to skip over a duplicate
+                    }
+                }
+                CalculateTargetPositionForPairContraction(ref iItem, verts, vertQuadrics);
+                pairList[i] = iItem;
+            }
+            List<MeshPairContraction> secondPairList = new List<MeshPairContraction>();
+
+            foreach (MeshPairContraction newPair in pairList)
+                if (newPair != null)
+                    secondPairList.Add(newPair);
+
+            pairContractions = new MinHeap<MeshPairContraction>(secondPairList);
 
             return removedFaces;
         }
@@ -180,6 +203,7 @@ namespace panelfar
                     trisToChange.Add(triIndex, false);
             }
 
+            //Iterate through tris attached to vert 1...
             foreach (int triIndex in trisAttachedToVerts[pair.v1])
             {
                 if (indexTris[triIndex] == null)
@@ -203,7 +227,7 @@ namespace panelfar
             }
         }
 
-        public static List<MeshPairContraction> GeneratePairContractions(MeshIndexTriangle[] indexTris)
+        public static MinHeap<MeshPairContraction> GeneratePairContractions(MeshIndexTriangle[] indexTris, Vector3[] verts, Quadric[] vertQuadrics)
         {
             List<MeshPairContraction> pairContractions = new List<MeshPairContraction>();
 
@@ -221,7 +245,13 @@ namespace panelfar
                     pairContractions.Add(e2);
             }
 
-            return pairContractions;
+            //Calculate point that each pair contraction will contract to if it is to be done
+            CalculateTargetPositionForAllPairContractions(ref pairContractions, verts, vertQuadrics);
+
+
+            MinHeap<MeshPairContraction> heap = new MinHeap<MeshPairContraction>(pairContractions);
+
+            return heap;
         }
 
         public static void CalculateTargetPositionForAllPairContractions(ref List<MeshPairContraction> pairContractions, Vector3[] verts, Quadric[] vertQuadrics)
@@ -241,18 +271,18 @@ namespace panelfar
             Quadric Q = Q0 + Q1;
 
             if (Q.Optimize(ref pair.contractedPosition, 1e-12))
-                pair.error = -Q.Evaluate(pair.contractedPosition);
+                pair.error = Q.Evaluate(pair.contractedPosition);
             else
             {
                 double ei = Q.Evaluate(v0), ej = Q.Evaluate(v1);
                 if (ei < ej)
                 {
-                    pair.error = -ei;
+                    pair.error = ei;
                     pair.contractedPosition = v0;
                 }
                 else
                 {
-                    pair.error = -ej;
+                    pair.error = ej;
                     pair.contractedPosition = v1;
                 }
             }
@@ -280,6 +310,7 @@ namespace panelfar
             return trisAttachedToVerts;
         }
 
+        //Returns an array of quadrics for evaluating the error of each possible contraction
         public static Quadric[] CalculateVertQuadrics(Vector3[] verts, MeshIndexTriangle[] indexTris)
         {
             Quadric[] vertQuadrics = new Quadric[verts.Length];
@@ -293,8 +324,16 @@ namespace panelfar
                 v0 = verts[tri.v0];
                 v1 = verts[tri.v1];
                 v2 = verts[tri.v2];
-                Vector4 p = PANELFARTriangleUtils.triangle_plane(v0, v1, v2);
                 double area = PANELFARTriangleUtils.triangle_area(v0, v1, v2);
+                Vector4 p;
+                if (area > 0)
+                    p = PANELFARTriangleUtils.triangle_plane(v0, v1, v2);
+                else
+                {
+                    p = PANELFARTriangleUtils.triangle_plane(v2, v1, v0);
+                    area = -area;
+                }
+
                 Quadric Q = new Quadric(p.x, p.y, p.z, p.w, area);
 
                 // Area-weight quadric and add it into the three quadrics for the corners
