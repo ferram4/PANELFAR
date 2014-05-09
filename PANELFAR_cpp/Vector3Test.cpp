@@ -1,18 +1,56 @@
 #include "stdafx.h"
-/*#include "CppUnitTest.h"
+#include "PANELFARVector3.hpp"
+#include <gtest\gtest.h>
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-namespace PANELFAR_cpp
+namespace panelfar_cpp
 {
-	TEST_CLASS(Vector3Test)
+	TEST(Vector3Test, HandlesAssignmentOperation)
 	{
-	public:
-		
-		TEST_METHOD(TestMethod1)
-		{
-			// TODO: Your test code here
-		}
+		Vector3 v0, v1;
+		v0 = Vector3(1, 0, 0);
+		v1 = Vector3(1, 0, 0);
 
+		EXPECT_EQ(1, v0.Magnitude());
 	};
-}*/
+	TEST(Vector3Test, HandlesOperators)
+	{
+		Vector3 v0, v1, v2;
+		v0 = Vector3(1, 0, 0);
+		v1 = Vector3(1, 0, 0);
+
+		EXPECT_TRUE(v0 == v1);
+		EXPECT_FALSE(v0 != v1);
+
+		v0 = Vector3(2, 7, -5);
+		v1 = Vector3(0, 1, 3);
+
+		EXPECT_TRUE(v0 != v1);
+		EXPECT_FALSE(v0 == v1);
+
+		v2 = v0 + v1;
+		EXPECT_EQ(Vector3(2, 8, -2), v2);
+		v2 = v0 - v1;
+		EXPECT_EQ(Vector3(2, 6, -8), v2);
+
+		v0 *= 5;
+		v1 = Vector3(10, 35, -25);
+
+		EXPECT_EQ(v1, v0);
+
+		v0 /= 10;
+		v1 = Vector3(1, 3.5, -2.5);
+
+		EXPECT_EQ(v1, v0);
+	};
+	TEST(Vector3Test, HandlesDotAndCrossProducts)
+	{
+		Vector3 v0, v1;
+		v0 = Vector3(1, 0, 0);
+		v1 = Vector3(1, 0, 0);
+
+		EXPECT_EQ(1, Vector3::Dot(v0, v1));
+		EXPECT_EQ(0, Vector3::Cross(v0, v1).Magnitude());
+		v1 = Vector3(0, 1, 0);
+		EXPECT_EQ(Vector3(0, 0, 1), Vector3::Cross(v0, v1));
+	};
+}

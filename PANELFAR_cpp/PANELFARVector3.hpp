@@ -47,14 +47,14 @@ namespace panelfar_cpp
 			return v;
 		}
 
-		inline double Dot(Vector3 const& v0, Vector3 const& v1)
+		inline static double Dot(Vector3 const& v0, Vector3 const& v1)
 		{
 			double dot = v0.x * v1.x
 				+ v0.y * v1.y
 				+ v0.z * v1.z;
 			return dot;
 		}
-		inline Vector3 Cross(Vector3 const& v0, Vector3 const& v1)
+		inline static Vector3 Cross(Vector3 const& v0, Vector3 const& v1)
 		{
 			double a, b, c;
 			a = v0.y * v1.z - v0.z * v1.y;
@@ -65,12 +65,53 @@ namespace panelfar_cpp
 			return cross;
 		}
 
-		inline Vector3 operator*(Vector3 const& v0, double const& s)
+		inline void operator*=(double const& s)
 		{
-			return PANELFARVector3(v0.x * s,
-				v0.y * s,
-				v0.z * s);
-		}
+			this->x *= s;
+			this->y *= s;
+			this->z *= s;
+
+		};
+		inline void operator/=(double const& s)
+		{
+			this->operator*=(1 / s);
+		};
+
 	};
 
+	inline Vector3 operator+(Vector3 const& v0, Vector3 const& v1)
+	{
+		return Vector3(v0.x + v1.x,
+			v0.y + v1.y,
+			v0.z + v1.z);
+	};
+	inline Vector3 operator-(Vector3 const& v0, Vector3 const& v1)
+	{
+		return Vector3(v0.x - v1.x,
+			v0.y - v1.y,
+			v0.z - v1.z);
+	};
+	inline Vector3 operator*(Vector3 const& v0, double const& s)
+	{
+		return Vector3(v0.x * s,
+			v0.y * s,
+			v0.z * s);
+	};
+	inline Vector3 operator/(Vector3 const& v0, double const& s)
+	{
+		return v0 * (1 / s);
+	};
+	inline bool operator==(Vector3 const& v0, Vector3 const& v1)
+	{
+		if (v0.x == v1.x &&
+			v0.y == v1.y &&
+			v0.z == v1.z){
+			return true;
+		}
+		return false;
+	};
+	inline bool operator!=(Vector3 const& v0, Vector3 const& v1)
+	{
+		return !(v0 == v1);
+	};
 }

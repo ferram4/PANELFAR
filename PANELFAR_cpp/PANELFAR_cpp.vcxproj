@@ -25,7 +25,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CLRSupport>true</CLRSupport>
@@ -46,6 +46,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\ferram4\Documents\Visual Studio 2013\Projects\gtest-1.7.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\ferram4\Documents\Visual Studio 2013\Projects\gtest-1.7.0\msvc\gtest;$(LibraryPath)</LibraryPath>
+    <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -67,7 +70,9 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
+      <AdditionalLibraryDirectories>C:\Users\ferram4\Documents\Visual Studio 2013\Projects\gtest-1.7.0\msvc\gtest;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(VisualStudioDir)\Projects\gtest-1.7.0\msvc\gtest\Release\gtest.lib;$(VisualStudioDir)\Projects\gtest-1.7.0\msvc\gtest\Release\gtest_main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
