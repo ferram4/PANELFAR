@@ -3,3 +3,4 @@
 /PANELFAR/bin/Release/Assembly-CSharp-firstpass.dll
 /PANELFAR/bin/Release/UnityEngine.dll
 /PANELFAR/obj/Debug/*
+/PANELFAR/ipch/*
