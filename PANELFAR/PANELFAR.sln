@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANELFAR", "PANELFAR.csproj", "{8F25610A-6A25-49F2-B961-18206CA5DD87}"
+	ProjectSection(ProjectDependencies) = postProject
+		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68} = {17D73C6F-3026-4D4C-8AFF-70199B7D6E68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PANELFAR_cpp", "..\PANELFAR_cpp\PANELFAR_cpp.vcxproj", "{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}"
 EndProject
@@ -33,6 +36,7 @@ Global
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Debug|Win32.ActiveCfg = Debug|Win32
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Debug|Win32.Build.0 = Debug|Win32
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Release|Any CPU.ActiveCfg = Release|Win32
+		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Release|Any CPU.Build.0 = Release|Win32
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Release|Mixed Platforms.ActiveCfg = Release|Win32
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{17D73C6F-3026-4D4C-8AFF-70199B7D6E68}.Release|Win32.ActiveCfg = Release|Win32
