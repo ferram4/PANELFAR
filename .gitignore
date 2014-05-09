@@ -4,3 +4,6 @@
 /PANELFAR/bin/Release/UnityEngine.dll
 /PANELFAR/obj/Debug/*
 /PANELFAR/ipch/*
+/PANELFAR_cpp/Release/*
+/PANELFAR_cpp/Debug/*
+/PANELFAR_cpp/PANELFARcpp.sdf

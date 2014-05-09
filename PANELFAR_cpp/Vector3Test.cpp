@@ -4,13 +4,13 @@
 
 namespace panelfar_cpp
 {
-	TEST(Vector3Test, HandlesAssignmentOperation)
+	TEST(Vector3Test, HandlesMagnitudes)
 	{
-		Vector3 v0, v1;
-		v0 = Vector3(1, 0, 0);
-		v1 = Vector3(1, 0, 0);
+		Vector3 v0;
+		v0 = Vector3(2, 0, 0);
 
-		EXPECT_EQ(1, v0.Magnitude());
+		EXPECT_EQ(2, v0.Magnitude());
+		EXPECT_EQ(4, v0.SqrMagnitude());
 	};
 	TEST(Vector3Test, HandlesOperators)
 	{
