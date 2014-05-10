@@ -13,12 +13,17 @@ namespace panelfar_cpp
 			a20, a21, a22;
 
 		inline Matrix3();
-		inline Matrix3(Vector3 v0, Vector3 v1, Vector3 v2);
-		inline Matrix3(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22);
+		inline Matrix3(Vector3 const& v0,
+						Vector3 const& v1,
+						Vector3 const& v2);
+		inline Matrix3(double const& m00, double const& m01, double const& m02,
+						double const& m10, double const& m11, double const& m12,
+						double const& m20, double const& m21, double const& m22);
 
 		inline double Determinant();
 
 		inline Matrix3 Transpose();
+		inline Matrix3 CofactorMatrix();
 
 		inline static bool Inverse(Matrix3 &M, double const& margin);
 

@@ -5,17 +5,21 @@
 
 namespace panelfar_cpp
 {
-	inline Matrix3::Matrix3()
-	{
-		Matrix3(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0));
-	}
-	inline Matrix3::Matrix3(Vector3 v0, Vector3 v1, Vector3 v2)
-	{
-		Matrix3(v0.x, v0.y, v0.z,
-			v1.x, v1.y, v1.z,
-			v2.x, v2.y, v2.z);
-	}
-	inline Matrix3::Matrix3(double m00, double m01, double m02, double m10, double m11, double m12, double m20, double m21, double m22)
+	inline Matrix3::Matrix3() : Matrix3(Vector3(0, 0, 0),
+										Vector3(0, 0, 0),
+										Vector3(0, 0, 0)){}
+
+
+	inline Matrix3::Matrix3(Vector3 const& v0,
+							Vector3 const& v1,
+							Vector3 const& v2) : Matrix3(v0.x, v0.y, v0.z,
+														v1.x, v1.y, v1.z,
+														v2.x, v2.y, v2.z){}
+
+
+	inline Matrix3::Matrix3(double const& m00, double const& m01, double const& m02,
+							double const& m10, double const& m11, double const& m12,
+							double const& m20, double const& m21, double const& m22)
 	{
 		a00 = m00; a01 = m01; a02 = m02;
 		a10 = m10; a11 = m11; a12 = m12;
@@ -32,17 +36,24 @@ namespace panelfar_cpp
 	inline Matrix3 Matrix3::Transpose()
 	{
 		return Matrix3(a00, a10, a20,
-			a01, a11, a21,
-			a02, a12, a22);
+						a01, a11, a21,
+						a02, a12, a22);
+	}
+
+	inline Matrix3 Matrix3::CofactorMatrix()
+	{
+		return Matrix3(a11 * a22 - a12 * a21, a02 * a21 - a01 * a22, a01 * a12 - a02 * a11,
+			a12 * a20 - a10 * a22, a00 * a22 - a02 * a20, a02 * a10 - a00 * a12,
+			a10 * a21 - a11 * a20, a01 * a20 - a00 * a21, a00 * a11 - a01 * a10);
 	}
 
 	inline bool Matrix3::Inverse(Matrix3 &M, double const& margin)
 	{
 		double det = M.Determinant();
-		if (abs(det - 0) < margin)
+		if (abs(det) < margin)
 			return false;
 
-		M = M.Transpose() / det;
+		M = M.CofactorMatrix() / det;
 		return true;
 	}
 
@@ -56,22 +67,22 @@ namespace panelfar_cpp
 	inline Matrix3 operator +(Matrix3 const& M0, Matrix3 const& M1)
 	{
 		return Matrix3(M0.a00 + M1.a00, M0.a01 + M1.a01, M0.a02 + M1.a02,
-			M0.a10 + M1.a10, M0.a11 + M1.a11, M0.a12 + M1.a12,
-			M0.a20 + M1.a20, M0.a21 + M1.a21, M0.a22 + M1.a22);
+					M0.a10 + M1.a10, M0.a11 + M1.a11, M0.a12 + M1.a12,
+					M0.a20 + M1.a20, M0.a21 + M1.a21, M0.a22 + M1.a22);
 	}
 	inline Matrix3 operator -(Matrix3 const& M0, Matrix3 const& M1)
 	{
 		return Matrix3(M0.a00 - M1.a00, M0.a01 - M1.a01, M0.a02 - M1.a02,
-			M0.a10 - M1.a10, M0.a11 - M1.a11, M0.a12 - M1.a12,
-			M0.a20 - M1.a20, M0.a21 - M1.a21, M0.a22 - M1.a22);
+					M0.a10 - M1.a10, M0.a11 - M1.a11, M0.a12 - M1.a12,
+					M0.a20 - M1.a20, M0.a21 - M1.a21, M0.a22 - M1.a22);
 	}
 
 	//Scaling operations
 	inline Matrix3 operator *(Matrix3 const& M, double const& s)
 	{
 		return Matrix3(M.a00 * s, M.a01 * s, M.a02 * s,
-			M.a10 * s, M.a11 * s, M.a12 * s,
-			M.a20 * s, M.a21 * s, M.a22 * s);
+					M.a10 * s, M.a11 * s, M.a12 * s,
+					M.a20 * s, M.a21 * s, M.a22 * s);
 	}
 	inline Matrix3 operator *(double const& s, Matrix3 const& M)
 	{
@@ -91,9 +102,15 @@ namespace panelfar_cpp
 	}
 	inline Matrix3 operator *(Matrix3 const& M0, Matrix3 const& M1)
 	{
-		return Matrix3(Vector3(M0.a00 * M1.a00 + M0.a01 * M1.a10 + M0.a02 * M1.a20, M0.a00 * M1.a01 + M0.a01 * M1.a11 + M0.a02 * M1.a21, M0.a00 * M1.a02 + M0.a01 * M1.a12 + M0.a02 * M1.a22),
-			Vector3(M0.a10 * M1.a00 + M0.a11 * M1.a10 + M0.a12 * M1.a20, M0.a10 * M1.a01 + M0.a11 * M1.a11 + M0.a12 * M1.a21, M0.a10 * M1.a02 + M0.a11 * M1.a12 + M0.a12 * M1.a22),
-			Vector3(M0.a20 * M1.a00 + M0.a21 * M1.a10 + M0.a22 * M1.a20, M0.a20 * M1.a01 + M0.a21 * M1.a11 + M0.a22 * M1.a21, M0.a20 * M1.a02 + M0.a21 * M1.a12 + M0.a22 * M1.a22));
+		return Matrix3(Vector3(M0.a00 * M1.a00 + M0.a01 * M1.a10 + M0.a02 * M1.a20,
+											M0.a00 * M1.a01 + M0.a01 * M1.a11 + M0.a02 * M1.a21,
+															M0.a00 * M1.a02 + M0.a01 * M1.a12 + M0.a02 * M1.a22),
+			Vector3(M0.a10 * M1.a00 + M0.a11 * M1.a10 + M0.a12 * M1.a20,
+											M0.a10 * M1.a01 + M0.a11 * M1.a11 + M0.a12 * M1.a21,
+															M0.a10 * M1.a02 + M0.a11 * M1.a12 + M0.a12 * M1.a22),
+			Vector3(M0.a20 * M1.a00 + M0.a21 * M1.a10 + M0.a22 * M1.a20,
+											M0.a20 * M1.a01 + M0.a21 * M1.a11 + M0.a22 * M1.a21,
+															M0.a20 * M1.a02 + M0.a21 * M1.a12 + M0.a22 * M1.a22));
 	}
 
 	inline bool operator ==(Matrix3 const& M0, Matrix3 const& M1)

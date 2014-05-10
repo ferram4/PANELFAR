@@ -9,10 +9,8 @@ namespace panelfar_cpp
 
 	public:
 		double x, y, z;
-		inline Vector3()
-		{
-			Vector3(0, 0, 0);
-		}
+		inline Vector3() : Vector3(0, 0, 0){}
+
 		inline Vector3(double const& a, double const& b, double const& c)
 		{
 			x = a;
