@@ -33,6 +33,15 @@
     <ClInclude Include="PANELFARVector3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PANELFARMath.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARQuadric-body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARQuadric.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -45,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Matrix3Test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadricTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

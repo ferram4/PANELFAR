@@ -13,3 +13,5 @@ Struct panelfar_cpp.Vector3: AutoLayout, AnsiClass, Class, Public, SequentialLay
   :System.ValueType
 Struct panelfar_cpp.Matrix3: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType
+Struct panelfar_cpp.Quadric: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+  :System.ValueType
