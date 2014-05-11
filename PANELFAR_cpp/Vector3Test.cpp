@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "PANELFARVector3.hpp"
+#include "PANELFARVector3-body.hpp"
 #include <gtest\gtest.h>
 
 namespace panelfar_cpp

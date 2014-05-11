@@ -60,5 +60,12 @@ namespace panelfar_cpp
 
 		EXPECT_EQ(Matrix3(Vector3(2, 1, -2), Vector3(-2, 0, 2), Vector3(-1, -1, 2)), M2 * 2);
 
+		EXPECT_EQ(Matrix3(12, 7, 8,
+			30, 16, 20,
+			48, 25, 32), M0 * M1);
+
+		EXPECT_EQ(Matrix3(16,20,24,
+			10,14,18,
+			20,25,30), M1 * M0);
 	}
 }

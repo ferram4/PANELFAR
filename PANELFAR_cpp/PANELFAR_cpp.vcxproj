@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="PANELFARMatrix3-body.hpp" />
     <ClInclude Include="PANELFARMatrix3.hpp" />
+    <ClInclude Include="PANELFARVector3-body.hpp" />
     <ClInclude Include="PANELFARVector3.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />

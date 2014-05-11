@@ -21,13 +21,16 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PANELFARVector3.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PANELFARMatrix3-body.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PANELFARMatrix3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARVector3-body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARVector3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
