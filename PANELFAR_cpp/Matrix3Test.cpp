@@ -56,7 +56,7 @@ namespace panelfar_cpp
 		M2 = M1;
 		EXPECT_EQ(4, M1.Determinant());
 
-		Matrix3::Inverse(M2, 1e-12);
+		EXPECT_TRUE(Matrix3::Inverse(M2, 1e-5));
 
 		EXPECT_EQ(Matrix3(Vector3(2, 1, -2), Vector3(-2, 0, 2), Vector3(-1, -1, 2)), M2 * 2);
 

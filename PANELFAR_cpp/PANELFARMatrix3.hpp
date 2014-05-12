@@ -1,7 +1,7 @@
 /*Implementation of a 3x3 Matrix*/
 
 #pragma once;
-#include "PANELFARVector3.hpp"
+#include "PANELFARVector3-body.hpp"
 
 namespace panelfar_cpp
 {

@@ -58,7 +58,7 @@ namespace panelfar_cpp
 	inline bool Quadric::Optimize(Vector3 &v, double epsilon)
 	{
 		Matrix3 invMat = Tensor();
-		if (Matrix3::Inverse(invMat, epsilon))
+		if (!Matrix3::Inverse(invMat, epsilon))
 			return false;
 
 		v = invMat * Vector() * -1;

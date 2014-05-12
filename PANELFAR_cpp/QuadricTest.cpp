@@ -111,4 +111,16 @@ namespace panelfar_cpp
 
 		EXPECT_EQ(2, Q0.GetArea());
 	};
+	TEST(QuadricTest, HandlesFunctions)
+	{
+		Quadric Q0, Q1;
+
+		Q0 = Quadric(2, 3, 4, 5, 2);
+
+		EXPECT_EQ(196, Q0.Evaluate(1, 1, 1));
+
+		Vector3 v = Vector3(1, 1, 1);
+
+		EXPECT_FALSE(Q0.Optimize(v, 1e-12));
+	}
 }
