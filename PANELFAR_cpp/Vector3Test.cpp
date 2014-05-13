@@ -32,6 +32,15 @@ namespace panelfar_cpp
 		v2 = v0 - v1;
 		EXPECT_EQ(Vector3(2, 6, -8), v2);
 
+		v0 += v1;
+		EXPECT_EQ(Vector3(2, 8, -2), v0);
+
+		v0 = Vector3(2, 7, -5);
+		v0 -= v1;
+		EXPECT_EQ(Vector3(2, 6, -8), v0);
+
+		v0 = Vector3(2, 7, -5);
+
 		v0 *= 5;
 		v1 = Vector3(10, 35, -25);
 
@@ -41,6 +50,11 @@ namespace panelfar_cpp
 		v1 = Vector3(1, 3.5, -2.5);
 
 		EXPECT_EQ(v1, v0);
+
+		v0 = Vector3(2, 7, -5);
+		v1 = Vector3(0, 1, 3);
+
+
 	};
 	TEST(Vector3Test, HandlesDotAndCrossProducts)
 	{

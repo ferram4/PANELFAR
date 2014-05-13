@@ -70,6 +70,20 @@ namespace panelfar_cpp
 		this->operator*=(1 / s);
 	}
 
+	inline void Vector3::operator += (Vector3 const& v1)
+	{
+		this->x += v1.x;
+		this->y += v1.y;
+		this->z += v1.z;
+	}
+
+	inline void Vector3::operator -= (Vector3 const& v1)
+	{
+		this->x -= v1.x;
+		this->y -= v1.y;
+		this->z -= v1.z;
+	}
+
 	inline Vector3 operator+(Vector3 const& v0, Vector3 const& v1)
 	{
 		return Vector3(v0.x + v1.x,

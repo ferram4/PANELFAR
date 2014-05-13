@@ -42,6 +42,15 @@
     <ClInclude Include="PANELFARQuadric.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PANELFARMeshFace.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARMeshPrimitives.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARMeshPrimitives-body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
@@ -57,6 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="QuadricTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshPrimitiveTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

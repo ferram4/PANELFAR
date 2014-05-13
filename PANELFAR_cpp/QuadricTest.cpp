@@ -113,7 +113,7 @@ namespace panelfar_cpp
 	};
 	TEST(QuadricTest, HandlesFunctions)
 	{
-		Quadric Q0, Q1;
+		Quadric Q0;
 
 		Q0 = Quadric(2, 3, 4, 5, 2);
 

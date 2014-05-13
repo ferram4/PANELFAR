@@ -81,6 +81,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PANELFARMeshFace.hpp" />
+    <ClInclude Include="PANELFARMeshPrimitives-body.hpp" />
     <ClInclude Include="PANELFARMath.hpp" />
     <ClInclude Include="PANELFARMatrix3-body.hpp" />
     <ClInclude Include="PANELFARMatrix3.hpp" />
@@ -88,12 +90,14 @@
     <ClInclude Include="PANELFARQuadric.hpp" />
     <ClInclude Include="PANELFARVector3-body.hpp" />
     <ClInclude Include="PANELFARVector3.hpp" />
+    <ClInclude Include="PANELFARMeshPrimitives.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Matrix3Test.cpp" />
+    <ClCompile Include="MeshPrimitiveTest.cpp" />
     <ClCompile Include="QuadricTest.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

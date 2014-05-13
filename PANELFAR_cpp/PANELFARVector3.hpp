@@ -22,6 +22,8 @@ namespace panelfar_cpp
 		inline static double Dot(Vector3 const& v0, Vector3 const& v1);
 		inline static Vector3 Cross(Vector3 const& v0, Vector3 const& v1);
 
+		inline void operator+=(Vector3 const& v1);
+		inline void operator-=(Vector3 const& v1);
 		inline void operator*=(double const& s);
 		inline void operator/=(double const& s);
 
