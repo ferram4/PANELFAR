@@ -81,11 +81,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PANELFARMeshFace.hpp" />
     <ClInclude Include="PANELFARMeshPrimitives-body.hpp" />
     <ClInclude Include="PANELFARMath.hpp" />
     <ClInclude Include="PANELFARMatrix3-body.hpp" />
     <ClInclude Include="PANELFARMatrix3.hpp" />
+    <ClInclude Include="PANELFARPairContraction.hpp" />
     <ClInclude Include="PANELFARQuadric-body.hpp" />
     <ClInclude Include="PANELFARQuadric.hpp" />
     <ClInclude Include="PANELFARVector3-body.hpp" />

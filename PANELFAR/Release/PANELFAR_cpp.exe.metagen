@@ -13,11 +13,11 @@ Struct panelfar_cpp.Vector3: AutoLayout, AnsiClass, Class, Public, SequentialLay
   :System.ValueType
 Struct panelfar_cpp.Matrix3: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType
-Struct panelfar_cpp.MeshVertex: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+Struct panelfar_cpp.mesh_simplification.MeshVertex: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType
-Struct panelfar_cpp.MeshEdge: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+Struct panelfar_cpp.mesh_simplification.MeshEdge: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType
-Struct panelfar_cpp.MeshFace: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+Struct panelfar_cpp.mesh_simplification.MeshFace: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType
-Struct panelfar_cpp.Quadric: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
+Struct panelfar_cpp.mesh_simplification.Quadric: AutoLayout, AnsiClass, Class, Public, SequentialLayout, Sealed, BeforeFieldInit
   :System.ValueType

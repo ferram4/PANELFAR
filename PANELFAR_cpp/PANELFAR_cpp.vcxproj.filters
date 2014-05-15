@@ -42,13 +42,13 @@
     <ClInclude Include="PANELFARQuadric.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PANELFARMeshFace.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PANELFARMeshPrimitives.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PANELFARMeshPrimitives-body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARPairContraction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

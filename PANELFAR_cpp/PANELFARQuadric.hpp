@@ -6,37 +6,41 @@
 
 namespace panelfar_cpp
 {
-	public class Quadric
+	namespace mesh_simplification
 	{
-	private:
-		double	a2, ab, ac, ad,
-					b2, bc, bd,
-						c2, cd,
-							d2;
 
-		double area;
+		public class Quadric
+		{
+		private:
+			double	a2, ab, ac, ad,
+				b2, bc, bd,
+				c2, cd,
+				d2;
 
-	public:
+			double area;
 
-		inline Quadric();
-		inline Quadric(double const& a, double const& b, double const& c, double const& d, double const& r);
+		public:
 
-		inline Matrix3 Tensor();
-		inline Vector3 Vector();
-		inline double Offset();
-		inline double GetArea();
+			inline Quadric();
+			inline Quadric(double const& a, double const& b, double const& c, double const& d, double const& r);
 
-		inline double Evaluate(Vector3 const& v);
-		inline double Evaluate(double const& x, double const& y, double const& z);
+			inline Matrix3 Tensor();
+			inline Vector3 Vector();
+			inline double Offset();
+			inline double GetArea();
 
-		inline bool Optimize(Vector3 &v, double epsilon);
+			inline double Evaluate(Vector3 const& v);
+			inline double Evaluate(double const& x, double const& y, double const& z);
 
-		inline void operator+=(Quadric const& Q1);
-		inline void operator-=(Quadric const& Q1);
-		inline void operator*=(double const& s);
-	};
+			inline bool Optimize(Vector3 &v, double epsilon);
 
-	inline Quadric operator+(Quadric const& Q0, Quadric const& Q1);
-	inline Quadric operator-(Quadric const& Q0, Quadric const& Q1);
-	inline Quadric operator*(Quadric const& Q0, double const& s);
+			inline void operator+=(Quadric const& Q1);
+			inline void operator-=(Quadric const& Q1);
+			inline void operator*=(double const& s);
+		};
+
+		inline Quadric operator+(Quadric const& Q0, Quadric const& Q1);
+		inline Quadric operator-(Quadric const& Q0, Quadric const& Q1);
+		inline Quadric operator*(Quadric const& Q0, double const& s);
+	}
 }
