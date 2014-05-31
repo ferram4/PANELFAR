@@ -4,7 +4,7 @@
 
 namespace panelfar_cpp
 {
-	public struct Vector3
+	public class Vector3
 	{
 
 	public:
@@ -27,6 +27,8 @@ namespace panelfar_cpp
 		inline void operator*=(double const& s);
 		inline void operator/=(double const& s);
 
+		inline double& operator[](int i)       { if (i == 0) return x; else if (i == 1) return y; else return z; }
+		inline double  operator[](int i) const { if (i == 0) return x; else if (i == 1) return y; else return z; }
 	};
 
 	inline Vector3 operator+(Vector3 const& v0, Vector3 const& v1);

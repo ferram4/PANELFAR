@@ -5,7 +5,7 @@
 
 namespace panelfar_cpp
 {
-	public struct Matrix3
+	public class Matrix3
 	{
 	public:
 		double a00, a01, a02,

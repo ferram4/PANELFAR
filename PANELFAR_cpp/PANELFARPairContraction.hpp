@@ -35,8 +35,8 @@ namespace panelfar_cpp
 			Vector3 dv1, dv2;  // dv2 is not really necessary
 
 			unsigned int delta_pivot;
-			std::vector<MeshFaceID> delta_faces;
-			std::vector<MeshFaceID> dead_faces;
+			std::vector<unsigned int> delta_faces;
+			std::vector<unsigned int> dead_faces;
 		};
 	}
 }

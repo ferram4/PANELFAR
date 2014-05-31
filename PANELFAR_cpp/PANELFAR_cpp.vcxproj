@@ -81,6 +81,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PANELFARMeshModel-body.hpp" />
+    <ClInclude Include="PANELFARMeshModel.hpp" />
     <ClInclude Include="PANELFARMeshPrimitives-body.hpp" />
     <ClInclude Include="PANELFARMath.hpp" />
     <ClInclude Include="PANELFARMatrix3-body.hpp" />

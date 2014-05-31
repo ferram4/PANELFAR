@@ -16,9 +16,13 @@ namespace panelfar_cpp{
 		{
 		public:
 			Vector3 vertex;
+			union {
+				struct { MeshVertID parent, next, prev; } proxy;
+			} as;
 
 			inline MeshVertex(){}
 			inline MeshVertex(Vector3 const& v);
+			inline MeshVertex(double const& x, double const& y, double const& z) : MeshVertex(Vector3(x, y, z)){}
 
 			inline bool operator ==(MeshVertex const& v1);
 			inline bool operator !=(MeshVertex const& v1);
@@ -26,6 +30,9 @@ namespace panelfar_cpp{
 			inline void operator +=(MeshVertex const& v1);
 			inline void operator -=(MeshVertex const& v1);
 			inline void operator *=(double const& s);
+
+			inline double& operator[](int i)       { return vertex[i]; }
+			inline double  operator[](int i) const { return vertex[i]; }
 		};
 
 		inline MeshVertex operator +(MeshVertex const& v0, MeshVertex const& v1);
