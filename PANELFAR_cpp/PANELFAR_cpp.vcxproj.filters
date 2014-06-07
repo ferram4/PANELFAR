@@ -57,6 +57,12 @@
     <ClInclude Include="PANELFARMeshModel-body.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PANELFARGenMatrix.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PANELFARGenMatrix-body.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp">
