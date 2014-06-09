@@ -100,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="GenMatrixTest.cpp" />
     <ClCompile Include="Matrix3Test.cpp" />
     <ClCompile Include="MeshPrimitiveTest.cpp" />
     <ClCompile Include="QuadricTest.cpp" />

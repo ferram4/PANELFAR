@@ -9,10 +9,10 @@ namespace panelfar_cpp
 	inline Matrix::Matrix(unsigned int const& m, unsigned int const& n)
 	{
 		Aij = std::vector<std::vector<double>>();
-		for (int i = 0; i < m; i++)
+		for (unsigned int i = 0; i < m; i++)
 		{
 			std::vector<double> vec = std::vector<double>();
-			for (int j = 0; j < n; j++)
+			for (unsigned int j = 0; j < n; j++)
 				vec.push_back(0);
 
 			Aij.push_back(vec);
@@ -49,7 +49,7 @@ namespace panelfar_cpp
 		//Switch width and height
 		tmp = m;
 		m = n;
-		n = tmp;
+		n = (int)tmp;
 	}
 
 	inline void Matrix::Invert()
@@ -64,16 +64,12 @@ namespace panelfar_cpp
 
 	inline void Matrix::PartialPivoting(Matrix &L, Matrix &U)
 	{
-		Matrix Pi_k = Matrix(U.n, U.n);
-		for (int i = 0; i < U.n; i++)
-			Pi_k(i, i) = 1;
-
-		for (int k = 0; k < U.n; k++)
+		for (unsigned int k = 0; k < U.n; k++)
 		{
 			//Search for i in {k, ..., n} such that abs(A_ik) >= abs(A_jk) for all j in {k, ..., n}
-			int i = k;
+			unsigned int i = k;
 			double tmp = abs(U(k, k));
-			for (int j = k; j < U.n; j++)
+			for (unsigned int j = k; j < U.n; j++)
 			{
 				double tmp2 = abs(U(j, k));
 				if (tmp2 >= tmp)
@@ -84,39 +80,35 @@ namespace panelfar_cpp
 			}
 
 			//Define Pi_k, the permutation that swaps i and k
-			Pi_k(i, i) = 0;	//Set the diagonals to zero
-			Pi_k(k, k) = 0;
-			Pi_k(k, i) = 1;	//Set the rows to swap
-			Pi_k(i, k) = 1;
-
-			U = Pi_k * U;
-
-			Pi_k(i, i) = 1;	//Reset the diagonals to one
-			Pi_k(k, k) = 1;
-			Pi_k(k, i) = 0;	//Reset the rows to prevent more swaps
-			Pi_k(i, k) = 0;
+			for (unsigned int j = 0; j < U.n; j++)
+			{
+				tmp = U(i, j);
+				U(i, j) = U(k, j);
+				U(k, j) = tmp;
+			}
 
 			//Determine Elements of Matrix L
 
-			for (int i = k + 1; i < U.n; i++)
+			for (unsigned int i = k + 1; i < U.n; i++)
 			{
 				L(i, k) = U(i, k) / U(k, k);
 			}
 
-			//Multiply out
+			//Multiply out to change U from modified A to actual U
 			U = L * U;
 		}
 
 		return;	//Return L and U from partial pivoting method
 	}
 
+
 	inline void Matrix::LowerSubstitution(Matrix &L, Matrix &RHS)
 	{
 		double tmp = 0;
-		for (int i = 0; i < L.n; i++)
+		for (unsigned int i = 0; i < L.n; i++)
 		{
 			tmp = 0;
-			for (int k = 0; k < i - 1; k++)
+			for (unsigned int k = 0; k < i - 1; k++)
 			{
 				tmp += L(i, k) * RHS(i, 1);
 			}
@@ -128,10 +120,10 @@ namespace panelfar_cpp
 	inline void Matrix::UpperSubstitution(Matrix &U, Matrix &RHS)
 	{
 		double tmp = 0;
-		for (int i = U.n - 1; i >= 0; i--)
+		for (unsigned int i = U.n - 1; i >= 0; i--)
 		{
 			tmp = 0;
-			for (int k = i + 1; k <= n; k++)
+			for (unsigned int k = i + 1; k <= n; k++)
 			{
 				tmp += U(i, k) * RHS(i, 1);
 			}
@@ -147,7 +139,7 @@ namespace panelfar_cpp
 
 		PartialPivoting(L, U);
 		LowerSubstitution(L, soln);
-		UpperSubstitution(R, soln);
+		UpperSubstitution(U, soln);
 
 		return soln;
 	}
@@ -194,6 +186,15 @@ namespace panelfar_cpp
 			}
 		}
 
+	}
+
+	inline Matrix Matrix::Identity(unsigned int const& m)
+	{
+		Matrix M = Matrix(m, m);
+		for (int i = 0; i < m; i++)
+			M(i, i) = 1;
+
+		return M;
 	}
 
 	inline Matrix operator + (Matrix const& M0, Matrix const& M1)

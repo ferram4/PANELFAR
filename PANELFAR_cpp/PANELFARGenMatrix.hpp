@@ -30,12 +30,14 @@ namespace panelfar_cpp
 		inline void operator -= (Matrix const& M);
 
 		inline void operator *= (double const& s);
+
+		inline static Matrix Identity(unsigned int const& m);
 		
 	private:
 		inline void PartialPivoting(Matrix &L, Matrix & U);
 
 		inline void UpperSubstitution(Matrix &U, Matrix &RHS);
-		inline void LowerSubstitution(Matrix &U, Matrix &RHS);
+		inline void LowerSubstitution(Matrix &L, Matrix &RHS);
 	};
 
 	inline Matrix operator + (Matrix const& M0, Matrix const& M1);
